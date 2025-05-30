@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Soumissions du formulaire{% endblock %}
+
+{% block body %}
+    <h1>Soumissions du formulaire</h1>
+
+    {% if submissions is empty %}
+        <p>Aucune soumission trouvée.</p>
+    {% else %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>Email</th>
+                    <th>Message</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for submission in submissions %}
+                    <tr>
+                        <td>{{ submission.name }}</td>
+                        <td>{{ submission.email }}</td>
+                        <td>{{ submission.message }}</td>
+                        <td>{{ submission.createdAt ? submission.createdAt|date('d/m/Y H:i') : '—' }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+{% endblock %}
