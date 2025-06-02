@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Console SQL Admin{% endblock %}
+
+{% block body %}
+<style>
+    .sql-input {
+        width: 100%;
+        background: #252526;
+        color: #d4d4d4;
+        border: 1px solid #3c3c3c;
+        padding: 10px;
+        font-family: monospace;
+    }
+    .sql-result {
+        margin-top: 20px;
+        max-height: 300px;
+        overflow-y: auto;
+    }
+    pre {
+        white-space: pre-wrap;
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Console SQL Admin</h1>
+
+    <form method="post">
+        <div class="form-group">
+            <textarea name="sql_command" class="sql-input" rows="5"
+                      placeholder="Entrez votre requête SQL ici...">{{ executedSql ?? '' }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary mt-2">Exécuter</button>
+        <button type="submit" class="btn btn-secondary mt-2" name="quick_select" value="form_submission">
+            Afficher les données de form_submission
+        </button>
+    </form>
+
+    {% if executedSql %}
+        <div class="mt-3">
+            <strong>Requête exécutée :</strong> <code>{{ executedSql }}</code>
+        </div>
+    {% endif %}
+
+    {% if error %}
+        <div class="alert alert-danger mt-3">
+            <strong>Erreur :</strong> {{ error }}
+        </div>
+    {% endif %}
+
+    {% if result is iterable %}
+        {% if result is not empty %}
+            <table class="table table-bordered table-striped table-sm mt-4">
+                <thead>
+                    <tr>
+                        {% for column in result[0]|keys %}
+                            <th>{{ column }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in result %}
+                        <tr>
+                            {% for cell in row %}
+                                <td>{{ cell }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="mt-3">Aucun résultat trouvé.</p>
+        {% endif %}
+    {% elseif result is defined %}
+        <pre class="sql-result">{{ result|json_encode(constant('JSON_PRETTY_PRINT')) }}</pre>
+    {% endif %}
+</div>
+{% endblock %}
